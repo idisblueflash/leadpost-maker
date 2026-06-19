@@ -1,13 +1,16 @@
 ---
 name: leadpost
-description: 把指派的 newsletter 文章走完整条流程，生成 Facebook 引流帖并落盘到 output/。当用户说「把这篇转成 FB 帖」「处理这篇文章」「转最新那篇」「leadpost」，或指派 input/ 下的某个文件让你改写成 Facebook 引流帖时激活。这是编排整条流程的工作流 skill，改写规则委托给 fb-maker skill。
+description: 把指派的 newsletter 文章走完整条流程，生成 Facebook 引流帖并落盘到 output/<name>/post.md。当用户说「把这篇转成 FB 帖」「处理这篇文章」「转最新那篇」「leadpost」，或指派 input/ 下的某个文件让你改写成 Facebook 引流帖时激活。这是编排整条流程的工作流 skill，改写规则委托给 fb-maker skill。
 ---
 
 # leadpost：指派文章 → Facebook 引流帖（完整工作流）
 
-这是**编排 skill**：负责「拿到一篇指派的文章 → 改写 → 落盘到 output/」整条流程。
+这是**编排 skill**：负责「拿到一篇指派的文章 → 改写 → 落盘到 output/<name>/post.md」整条流程。
 具体的改写规则（三段式结构、标题三选、结尾 callback、句式轮换、改写原则）不在这里重复，
 统一委托给 `.claude/skills/fb-maker/SKILL.md`——执行第 2 步时先读取它并严格照做。
+
+每篇文章的所有产物都放在 `output/<name>/` 这个文章目录下（FB 帖是 `post.md`，
+轮播图由 `carousel` skill 放在 `output/<name>/carousel/`）。
 
 ## 流程
 
@@ -19,7 +22,7 @@ description: 把指派的 newsletter 文章走完整条流程，生成 Facebook 
 | ---------------------------------- | ------------------------------------------------------------- |
 | `@input/<name>.md` 或指明 input/ 下某文件 | 直接读取该文件；`<name>` = 文件名（去掉 `.md`）                              |
 | 直接粘贴原文                             | 约定一个 kebab-case 的 `<name>` 作为文件名（可据标题拟，或问用户）                  |
-| 「转最新的那篇 / 还没转的那篇」                  | 列出 `input/` 里**没有同名 \*\*\*\*****`output/`** 的文件；多于一篇时让用户确认要哪篇 |
+| 「转最新的那篇 / 还没转的那篇」                  | 列出 `input/` 里**没有对应 `output/<name>/post.md`** 的文件；多于一篇时让用户确认要哪篇 |
 
 ### 第 2 步：改写
 
@@ -32,19 +35,19 @@ description: 把指派的 newsletter 文章走完整条流程，生成 Facebook 
 
 ### 第 3 步：落盘
 
-把结果写入 `output/<name>.md`，**文件名与 input 同名**，格式见下方。
+把结果写入 `output/<name>/post.md`，**`<name>` 与 input 同名**，格式见下方。
 **改写完直接写，不等用户确认。**
 
 ### 第 4 步：回报
 
-在对话里也展示成品，并明确告诉用户「已写入 `output/<name>.md`」，然后等待修改指令
+在对话里也展示成品，并明确告诉用户「已写入 `output/<name>/post.md`」，然后等待修改指令
 （如「换读者处境型标题」「压缩到 200 字以内」「把 XX 那段拿掉」）。收到指令后更新输出并重新落盘同一文件。
 
 ---
 
 ## 落盘文件格式
 
-`output/<name>.md` 内容结构（与现有样例保持一致）：
+`output/<name>/post.md` 内容结构（与现有样例保持一致）：
 
 ```markdown
 # 标题选项
